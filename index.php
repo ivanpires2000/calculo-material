@@ -1,233 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculo de materiais</title>
+    <title>Calculadora de Materiais</title>
+    <!-- Bootstrap para estilização e layout responsivo -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
     <style>
+        /* Estilização do modal "Aguarde" */
         #parede-espera {
-            position: absolute;
+            position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1000;
-            background: #c3c3c3;
-            display: flex;
-            flex-direction: column;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: none;
             justify-content: center;
             align-items: center;
-            text-align: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        #parede-espera img {
+            width: 80px;
+            margin-bottom: 15px;
         }
 
         #parede-espera p {
+            font-size: 1.5rem;
             font-weight: bold;
+            margin-top: 10px;
         }
 
+        /* Estilização para campos de erro */
+        .error {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+
+        .validacao-msg {
+            color: #dc3545;
+            font-size: 0.875rem;
+        }
     </style>
-
-
 </head>
 <body>
-    
-<main>
-    <h1 class="text-center mt-md-2">Calculadora de Materiais</h1>
+    <main class="container mt-5">
+        <h1 class="text-center mb-4">Calculadora de Materiais</h1>
 
-    <div class="container">
-        <div class="row g-2">
-            <fildset class="row g-2">
-                <legend>Comôdo</legend>
-                <div class="col-md-6">
-                    <label for="comodo-largura" class="form-label">Largura(m)</label>
-                    <input type="number" class="form-control" id="comodo-largura" required>
-                    <span id="comodo-largura-validacao" class="text-danger invisible"></span>
+        <!-- Formulário -->
+        <form id="calculadora-form">
+            <div class="row g-4">
+                <!-- Dimensões do cômodo -->
+                <fieldset class="col-md-6">
+                    <legend>Cômodo</legend>
+                    <div class="mb-3">
+                        <label for="comodo-largura" class="form-label">Largura (m)</label>
+                        <input type="number" class="form-control" id="comodo-largura" required>
+                        <div id="comodo-largura-validacao" class="validacao-msg invisible"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comodo-comprimento" class="form-label">Comprimento (m)</label>
+                        <input type="number" class="form-control" id="comodo-comprimento" required>
+                        <div id="comodo-comprimento-validacao" class="validacao-msg invisible"></div>
+                    </div>
+                </fieldset>
+
+                <!-- Dimensões do piso -->
+                <fieldset class="col-md-6">
+                    <legend>Piso</legend>
+                    <div class="mb-3">
+                        <label for="piso-largura" class="form-label">Largura (m)</label>
+                        <input type="number" class="form-control" id="piso-largura" required>
+                        <div id="piso-largura-validacao" class="validacao-msg invisible"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="piso-comprimento" class="form-label">Comprimento (m)</label>
+                        <input type="number" class="form-control" id="piso-comprimento" required>
+                        <div id="piso-comprimento-validacao" class="validacao-msg invisible"></div>
+                    </div>
+                </fieldset>
+
+                <!-- Margem percentual -->
+                <div class="col-md-12 mb-3">
+                    <label for="margem" class="form-label">Margem (%)</label>
+                    <input type="number" class="form-control" id="margem" required>
+                    <div id="margem-validacao" class="validacao-msg invisible"></div>
                 </div>
-                <div class="col-md-6">
-                    <label for="comodo-comprimento" class="form-label">Comprimento(m)</label>
-                    <input type="number" class="form-control" id="comodo-comprimento" required>
-                    <span id="comodo-comprimento-validacao" class="text-danger invisible"></span>
+
+                <!-- Botão de cálculo -->
+                <div class="col-md-12 text-center">
+                    <button type="button" class="btn btn-primary" id="btn-calcular" onclick="processar();">Calcular</button>
                 </div>
-            </fildset>
-            <fildset class="row g-2">
-            <legend>Piso</legend>
-                <div class="col-md-6">
-                    <label for="piso-largura" class="form-label">Largura(m)</label>
-                    <input type="number" class="form-control" id="piso-largura" required>
-                    <span id="piso-largura-validacao" class="text-danger invisible"></span>
-                </div>
-                <div class="col-md-6">
-                    <label for="piso-comprimento" class="form-label">Comprimento(m)</label>
-                    <input type="number" class="form-control" id="piso-comprimento" required>
-                    <span id="piso-comprimento-validacao" class="text-danger invisible"></span>
-                </div>
-            </fildset>
-            <div class="col-md-12"> 
-                <label for="margem" class="form-label">Margem(%)</label>
-                <input type="number" class="form-control" id="margem" required>
-                <span id="margem-validacao" class="text-danger invisible"></span>
             </div>
-            <div class="col-md-12">
-                <button class="btn btn-primary" id="btn-calcular" onclick="processar();">Calcular</button>
-            </div>
-            <div class="col-md-12">
-                <div id="resultado"></div>
-            </div>
-        </div> 
-    </div>
 
-    <div id="parede-espera" class="opacity-75 invisible">
-        <img src="images/carregando.gif" alt="Carregando">
-        <p>Por favor, aguarde.</p>
-    </div>
-</main>
+            <!-- Div para exibição do resultado -->
+            <div id="resultado" class="mt-4"></div>
+        </form>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<script>
-    
-    realizarBinds();
+        <!-- Modal de carregamento -->
+        <div id="parede-espera">
+            <img src="images/carregando.gif" alt="Carregando...">
+            <p>Por favor, aguarde...</p>
+        </div>
+    </main>
 
-    function realizarBinds()    {
-        const comodoLargura = document.getElementById("comodo-largura");
-        const comodoComprimento = document.getElementById("comodo-comprimento");
-        const pisoLargura = document.getElementById("piso-largura");
-        const pisoComprimento = document.getElementById("piso-comprimento");
-        const margem = document.getElementById("margem");
+    <!-- Scripts do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        // Função para controlar o modal de carregamento
+        function toggleLoading(show) {
+            const div = document.getElementById("parede-espera");
+            div.style.display = show ? "flex" : "none";
+        }
 
-        comodoLargura.addEventListener("focus", removerMensagemErro);
-        comodoComprimento.addEventListener("focus", removerMensagemErro);
-        pisoLargura.addEventListener("focus", removerMensagemErro);
-        pisoComprimento.addEventListener("focus", removerMensagemErro);
-        margem.addEventListener("focus", removerMensagemErro);
-    }
+        // Função principal para processamento do cálculo
+        function processar() {
+            const resultadoDiv = document.getElementById("resultado");
+            resultadoDiv.innerHTML = ""; // Limpa resultados anteriores
 
-    function toggleLoading(){
-        //recuperamos a div
-        const div = document.getElementById("parede-espera");
+            toggleLoading(true); // Exibe o modal de carregamento
 
-        //alternamos entre ligado e desligado
-        div.classList.toggle("invisible");
-    }
-
-    function processar(){
-        try {
-
-            toggleLoading();
+            // Recupera os valores dos campos de entrada
             const comodoLargura = document.getElementById("comodo-largura").value;
             const comodoComprimento = document.getElementById("comodo-comprimento").value;
             const pisoLargura = document.getElementById("piso-largura").value;
             const pisoComprimento = document.getElementById("piso-comprimento").value;
             const margem = document.getElementById("margem").value;
 
-            // if(comodoLargura <= 0){
-            //     alert("A largura do comôdo deve ser maior que 0");
-            //     return;
-            // }
-
-            // if(comodoComprimento <= 0){
-            //     alert("O comprimento do comôdo deve ser maior que 0");
-            //     return;
-            // }
-
-            // if(pisoLargura <= 0){
-            //     alert("A largura do piso deve ser maior que 0");
-            //     return;
-            // }
-
-            // if(pisoComprimento <= 0){
-            //     alert("O comprimento do piso deve ser maior que 0");
-            //     return;
-            // }
-
-            // if(margem <= 0){
-            //     alert("A margem deve ser maior que 0");
-            //     return;
-            // }
-
             const medidas = {
                 comodoLargura,
                 comodoComprimento,
                 pisoLargura,
                 pisoComprimento,
-                margem
-            }
+                margem,
+            };
 
-            const dados = JSON.stringify(medidas);
-
+            // Envia dados ao servidor usando Fetch API
             fetch('/calculo.php', {
                 method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: dados
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(medidas),
             })
-            .then(resposta => {
-                toggleLoading();
-                return resposta.json()
-            })
-            .then(resultado =>{
-                let elementoResultado = document.getElementById("resultado");
+            .then((resposta) => resposta.json())
+            .then((resultado) => {
+                toggleLoading(false); // Esconde o modal de carregamento
 
-                if(resultado.erro){
-                    //alert(resultado.erro);
-                    //elementoResultado.innerHTML = resultado.erro;
-                    resultado.erro.forEach(erroMsg => {
+                if (resultado.erro) {
+                    // Exibe mensagens de erro nos campos correspondentes
+                    resultado.erro.forEach((erroMsg) => {
                         exibirErro(erroMsg.idCampo, erroMsg.mensagem);
                     });
                     return;
                 }
 
-                //elementoResultado.innerHTML = '';
-
+                // Exibe os resultados do cálculo
                 const exibir =
-                "<p> Área do comodo: " + resultado.areaComodo + " </p>" +
-                "<p> Área do piso: " + resultado.areaPiso + " </p>" +
-                "<p> Quantidade de piso: " + resultado.quantidade + " </p>" +
-                "<p> Quantidade para margem: " + resultado.quantidadeMargem + " </p>" +
-                "<p> Total a ser comprado: " + resultado.quantidadeTotal + " </p>" ;
+                    `<p><strong>Área do Cômodo:</strong> ${resultado.areaComodo} m²</p>` +
+                    `<p><strong>Área do Piso:</strong> ${resultado.areaPiso} m²</p>` +
+                    `<p><strong>Quantidade de Pisos:</strong> ${resultado.quantidade}</p>` +
+                    `<p><strong>Quantidade com Margem:</strong> ${resultado.quantidadeMargem}</p>` +
+                    `<p><strong>Total a ser Comprado:</strong> ${resultado.quantidadeTotal}</p>`;
 
-                elementoResultado.innerHTML = exibir;
+                resultadoDiv.innerHTML = exibir;
             })
-            .catch(erro => {
-                alert("Ocorreu um erro");
-                console.error(erro);                
+            .catch((erro) => {
+                toggleLoading(false); // Esconde o modal de carregamento
+                alert("Ocorreu um erro durante o cálculo.");
+                console.error(erro);
             });
         }
-        catch(e){
-            alert("Ocorreu um erro ao atender a sua solicitação.");
-            console.error("Ocorreu um erro ao atender a sua solicitação. Detalhes", e);
-            
+
+        // Exibe mensagens de erro para validação
+        function exibirErro(idElemento, mensagemErro) {
+            const spanId = idElemento + "-validacao";
+            const input = document.getElementById(idElemento);
+            const spanErro = document.getElementById(spanId);
+
+            spanErro.innerHTML = mensagemErro;
+            spanErro.classList.remove("invisible");
+            input.classList.add("error"); // Aplica a classe de erro
         }
-    }
-
-    function exibirErro(idElemento, mensagemErro){
-        const spanId = idElemento+"-validacao";
-        const input = document.getElementById(idElemento);
-        const spanErro = document.getElementById(spanId);
-
-        //adicionar a mensagem de erro na span
-        spanErro.innerHTML = mensagemErro;
-
-        //tornar a span visivel
-        spanErro.classList.remove("invisible");
-
-        //adicionar as bordas vermelhas no input
-        input.classList.add("border", "border-danger-subtle");
-    }
-
-    function removerMensagemErro(e){        
-        const spanId = e.srcElement.id+"-validacao";
-        const input = e.srcElement;
-        const spanErro = document.getElementById(spanId);
-
-        //limpar a mensagem de erro na span
-        spanErro.innerHTML = "";
-
-        //tornar a span invisivel
-        spanErro.classList.add("invisible");
-
-        //remover as bordas vermelhas no input
-        input.classList.remove("border", "border-danger-subtle");
-    }
-
-</script>
+    </script>
 </body>
 </html>
